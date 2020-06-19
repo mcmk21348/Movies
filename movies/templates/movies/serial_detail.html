@@ -1,0 +1,30 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="content">
+
+<h1>{{ serial.title }}</h1>
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/qcPfI0y7wRU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				<div class="info_film_page">
+					<span class="label">Рейтинг: </span><span class="value">7.1/10</span>
+					<span class="label">Год: </span><span class="value">{{ serial.year }}</span>
+				</div>
+
+				<hr>
+
+				<h2>Описание {{ serial.title }}</h2>
+				<div class="description_film">
+					<img src="{{ serial.poster.url }}" alt="">
+                    <p>
+                        {{ serial.description }}
+                    </p>
+
+				</div>
+
+
+				<hr>
+
+    </div>
+{% endblock %}

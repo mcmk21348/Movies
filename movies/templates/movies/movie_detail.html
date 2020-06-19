@@ -1,0 +1,96 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+
+
+
+        {% block title %}
+            {{ movie.title }}
+        {% endblock %}
+
+
+{% block content %}
+                <h1>{{ movie.title }}</h1>
+                <hr>
+
+                <div class="embed-responsive embed-responsive-16by9">
+                  <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/qcPfI0y7wRU" frameborder="0" ></iframe>
+                </div>
+                <div class="well info-block text-center">
+                  <p><b>Год</b>: <span class="badge">{{ movie.year }}</span></p>
+                  <p><b>Страна</b>: <span class="badge">{{ movie.country }}</span></p>
+                  <p><b>Режисер</b>: <span class="badge">
+                      {% for director in movie.directors.all %}
+                            {{ director.name }}
+                      {% endfor %}
+                  </span></p>
+                    <p><b>Категория</b>: <span class="badge">{{ movie.category}}</span></p>
+                  <p><b>Жанр</b>: <span class="badge">
+                        {% for genre in movie.genre.all %}
+                            {{ genre.name }}
+                        {% endfor %}
+                  </span></p>
+                  <p><b>Актеры</b>: <span class="badge">
+                        {% for actor in movie.actors.all %}
+                            {{ actor.name }}
+                        {% endfor %}
+                  </span></p>
+                    <form action="{% url 'add_rating' %}" method="post" name="rating">
+                        <b>Рейтинг</b>
+                        {% csrf_token %}
+                        <input type="hidden" value="{{ movie.id }}" name="movie">
+                        <span class="rating">
+                            {% for k, v in star_form.fields.star.choices %}
+                                <input id="rating{{ v }}" type="radio" name="star" value="{{ k }}">
+                                <label for="rating{{ v }}">{{ k }}</label>
+                            {% endfor %}
+                        </span>
+
+                    </form>
+                </div>
+
+                <div class="margin-8"></div>
+
+                <h2>Описание {{ movie.title }}</h2>
+                <hr>
+
+                <div class="well">
+                  <p>
+                      {{ movie.description|safe }}
+                  </p>
+                </div>
+
+                <div class="margin-8"></div>
+
+                <h2>Отзывы об {{ movie.title }}</h2>
+                <hr>
+
+                <div class="panel panel-info">
+                    {% for review in movie.get_review %}
+                      <div class="panel-heading"><i class="glyphicon glyphicon-user"></i> <span>{{ review.name }}</span></div>
+                      <div class="panel-body">
+                        <p>{{ review.text }}</p>
+                          <a href="#formReview" onclick="addReview('{{ review.name }}', '{{ review.id }}')">Ответить</a>
+                      </div>
+                    {% endfor %}
+                </div>
+
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'add_review' movie.id %}" id="formReview">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent" id="contactparent" value="">
+                        <div class="form-group">
+                            <input type="text" placeholder="Ваше имя" class="form-control input-lg" name="name">
+                         </div>
+                        <div class="form-group">
+                            <textarea class="form-control" name="text" id="contactcomment"></textarea>
+                        </div>
+                        <button class="btn btn-lg btn-warning pull-right">Отправить</button>
+                    </form>
+                {% endif %}
+                <script>
+                    function addReview(name, id) {
+                        document.getElementById("contactparent").value = id;
+                        document.getElementById("contactcomment").innerText = `${name}, `
+                    }
+                </script>
+{% endblock %}
